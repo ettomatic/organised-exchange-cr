@@ -1,0 +1,13 @@
+name: organised_exchange
+version: 0.1.0
+
+authors:
+  - your-name-here <your-email-here>
+
+targets:
+  organised_exchange:
+    main: src/organised_exchange.cr
+
+crystal: 0.35.1
+
+license: MIT
