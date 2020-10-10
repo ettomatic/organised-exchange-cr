@@ -6,6 +6,20 @@ module OrganisedExchange
   VERSION = "0.1.0"
 
   # TODO: Put your code here
+  def self.run
+    config = Config.new
+    case config.source
+    when "file"
+      source = Sources::File
+    when "http"
+      source = Sources::Http
+    else
+      STDERR.puts "Source #{config.source} not recognised"
+      exit(1)
+    end
+
+    Parser.parse(source.new(config))
+  end
 end
 
 options = OptionParser.parse do |parser|
@@ -30,5 +44,4 @@ end
 
 puts "starting...\n"
 
-
-OrganisedExchange::Config.new.source
+OrganisedExchange.run
