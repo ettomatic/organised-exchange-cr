@@ -25,17 +25,17 @@ end
 options = OptionParser.parse do |parser|
   parser.banner = "Import Exchange ics into Org"
 
-   parser.on "-h", "--help", "Show help" do
-     puts parser
-     exit
-   end
+  parser.on "-h", "--help", "Show help" do
+    puts parser
+    exit
+  end
 
-   parser.on "init", "Creates config file in ~/.organised_exchange.config" do
-     OrganisedExchange::Config.generate
-     exit
-   end
+  parser.on "init", "Creates config file in ~/.organised_exchange.config" do
+    OrganisedExchange::Config.generate
+    exit
+  end
 
-   parser.invalid_option do |flag|
+  parser.invalid_option do |flag|
     STDERR.puts "ERROR: #{flag} is not a valid option."
     STDERR.puts parser
     exit(1)
