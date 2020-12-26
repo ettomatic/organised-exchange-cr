@@ -26,7 +26,7 @@ module OrganisedExchange
         @parsing = false
 
         unless @event.nil?
-          if @event.valid?
+          if @event.valid? && @event.scheduled?
             @events << @event
           end
         end
@@ -37,7 +37,7 @@ module OrganisedExchange
     end
 
     def formatted
-      @events.sort_by { |ev| ev.start_time }.each { |ev| puts ev.to_org }
+      @events.sort_by { |ev| ev.start_time }.map { |ev| ev.to_org }
     end
 
     def parse(line)

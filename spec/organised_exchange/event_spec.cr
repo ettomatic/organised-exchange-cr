@@ -1,7 +1,7 @@
 require "spec"
 
 describe "OrganisedExchange::Event" do
-  time = Time.utc(2020, 10, 9, 10, 30, 0)
+  time = Time.utc(2020, 10, 9, 9, 30, 0)
 
   describe "#valid?" do
     context "success" do
@@ -31,7 +31,7 @@ describe "OrganisedExchange::Event" do
         ev.title = "An event"
         ev.start_time = time
 
-        ev.to_org.should eq "*An event\n<2020-10-09 10:30:00 UTC>\n"
+        ev.to_org.should eq "* An event\nSCHEDULED: <2020-10-09 Fri 09:30>\n"
       end
     end
 

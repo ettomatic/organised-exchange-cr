@@ -12,20 +12,24 @@ module OrganisedExchange
       @end_time = Time::UNIX_EPOCH
     end
 
+    def scheduled?
+      @start_time > Time.utc
+    end
+
     def valid?
       @title != nil && @start_time != nil
     end
 
     def to_org
       if valid?
-        "*#{@title}\n<#{org_time(@start_time)}>\n"
+        "* #{@title}\nSCHEDULED: <#{org_time(@start_time)}>\n"
       end
     end
 
     # for now...
     private def org_time(time)
       if time
-        time.to_utc
+        time.to_utc.to_s("%Y-%m-%d %a %H:%M")
       end
     end
   end
