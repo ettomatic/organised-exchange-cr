@@ -32,5 +32,12 @@ module OrganisedExchange
       STDERR.puts "ERROR: location not set in #{CONFIG_FILE}"
       exit(1)
     end
+
+    def destination
+      @config["destination"]
+    rescue KeyError
+      STDERR.puts "ERROR: destination not set in #{CONFIG_FILE}"
+      exit(1)
+    end
   end
 end

@@ -18,7 +18,10 @@ module OrganisedExchange
       exit(1)
     end
 
-    Parser.parse(source.new(config))
+    org = Parser.parse(source.new(config))
+    File.open(Path[config.destination].expand(home: true), "w+") do |f|
+      org.each { |element| f.puts(element) }
+    end
   end
 end
 
