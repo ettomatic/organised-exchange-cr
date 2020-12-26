@@ -35,6 +35,12 @@ options = OptionParser.parse do |parser|
     exit
   end
 
+  parser.on "generate", "Generates org file" do
+    puts "starting...\n"
+    OrganisedExchange.run
+    exit
+  end
+
   parser.invalid_option do |flag|
     STDERR.puts "ERROR: #{flag} is not a valid option."
     STDERR.puts parser

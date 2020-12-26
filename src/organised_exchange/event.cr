@@ -1,8 +1,9 @@
 module OrganisedExchange
   struct Event
     property start_time : Time
-    setter title : String | Nil
     setter end_time : Time
+
+    setter title : String | Nil
     setter location : String | Nil
     setter description : String | Nil
 
@@ -17,12 +18,12 @@ module OrganisedExchange
 
     def to_org
       if valid?
-        "* #{@title}\n<#{org_time(@start_time)}>"
+        "*#{@title}\n<#{org_time(@start_time)}>\n"
       end
     end
 
     # for now...
-    def org_time(time)
+    private def org_time(time)
       if time
         time.to_utc
       end
