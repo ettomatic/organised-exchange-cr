@@ -50,7 +50,3 @@ options = OptionParser.parse do |parser|
     exit(1)
   end
 end
-
-puts "starting...\n"
-
-OrganisedExchange.run

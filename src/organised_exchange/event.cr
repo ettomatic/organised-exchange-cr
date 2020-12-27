@@ -14,8 +14,10 @@ module OrganisedExchange
       @end_time = Time::UNIX_EPOCH
     end
 
+    # an event is valid if has a title
+    # and is scheduled in the future
     def valid?
-      @title != nil && @start_time != nil
+      @title != nil && @start_time != nil && scheduled?
     end
 
     def to_org
@@ -25,7 +27,11 @@ module OrganisedExchange
     end
 
     def scheduled?
-      @start_time > Time.utc
+      if scheduled
+        scheduled.not_nil! > Time.utc
+      else
+        false
+      end
     end
 
     def repeated?
