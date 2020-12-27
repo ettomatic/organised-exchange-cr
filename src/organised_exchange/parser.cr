@@ -1,7 +1,7 @@
 module OrganisedExchange
   class Parser
-    def self.parse(source)
-      parser = self.new
+    def self.parse(source, time : Time)
+      parser = self.new(time)
 
       source.each do |line|
         parser << line
@@ -10,10 +10,11 @@ module OrganisedExchange
       parser.formatted
     end
 
-    def initialize
+    def initialize(time : Time)
+      @now = time
       @events = [] of Event
 
-      @event = Event.new
+      @event = Event.new(@now)
       @parsing = false
     end
 
@@ -21,7 +22,7 @@ module OrganisedExchange
       case line
       when "BEGIN:VEVENT"
         @parsing = true
-        @event = Event.new
+        @event = Event.new(@now)
       when "END:VEVENT"
         @parsing = false
 
@@ -30,7 +31,7 @@ module OrganisedExchange
             @events << @event
           end
         end
-        @event = Event.new
+        @event = Event.new(@now)
       else
         parse(line)
       end
@@ -41,53 +42,34 @@ module OrganisedExchange
     end
 
     def parse(line)
-      parse_summary(line)
-      parse_start(line)
-      parse_end(line)
-      parse_location(line)
-      parse_description(line)
-    end
+      matched = matcher.match(line)
+      op = matched.try &.["op"]
+      value = matched.try &.["value"]
 
-    def parse_summary(line)
-      content = line.split("SUMMARY:")
-
-      if content.size > 1
-        @event.title = content[1]
+      case op
+      when "SUMMARY"
+        @event.title = value
+      when "DTSTART"
+        @event.start_time = Time.parse_iso8601("#{value}+0100")
+      when "DTEND"
+        @event.end_time = Time.parse_iso8601("#{value}+0100")
+      when "LOCATION"
+        @event.location = value
+      when "DESCRIPTION"
+        @event.description = value
+      when "RRULE"
+        rec = parse_recurrency(value)
+        @event.recurrency = parse_recurrency(value)
       end
     end
 
-    # DTSTART;TZID=GMT Standard Time:20190927T103000
-    def parse_start(line)
-      content = %r{DTSTART;TZID=GMT Standard Time:(\d+T\d+)}.match(line)
-
-      if content
-        @event.start_time = Time.parse_iso8601 "#{content[1]}+0100"
-      end
+    def matcher
+      %r{(?<op>[A-Z]+);?(TZID=(?<tzid>GMT Standard Time))?:(?<value>.+)}
     end
 
-    # DTEND;TZID=GMT Standard Time:20191001T113000
-    def parse_end(line)
-      content = %r{DTEND;TZID=GMT Standard Time:(\d+T\d+)}.match(line)
-
-      if content
-        @event.end_time = Time.parse_iso8601 "#{content[1]}+0100"
-      end
-    end
-
-    def parse_location(line)
-      content = line.split("LOCATION:")
-
-      if content.size > 1
-        @event.location = content[1]
-      end
-    end
-
-    def parse_description(line)
-      content = line.split("DESCRIPTION:")
-
-      if content.size > 1
-        @event.description = content[1]
-      end
+    #"FREQ=WEEKLY;UNTIL=20410924T093000Z;INTERVAL=1;BYDAY=FR;WKST=SU"
+    def parse_recurrency(value)
+      value.try &.split(";").map { |i| i.split("=") }.to_h
     end
   end
 end
